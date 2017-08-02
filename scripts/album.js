@@ -67,7 +67,16 @@ var createSongRow = function(songNumber, songName, songLength) {
     return template;
 };
 
-var currentAlbum;
+var albumArray = [albumPicasso, albumMarconi, albumInfected];
+var currentAlbumIndex;
+var setAlbumIndex = function (album) {
+  for (var index = 0; index < albumArray.length; index++) {
+    if (albumArray[index] === album) {
+    currentAlbumIndex = index;
+    return;
+  }
+  }
+};
 
 var setCurrentAlbum = function(album) {
   var albumTitle = document.getElementsByClassName('album-view-title')[0];
@@ -85,8 +94,10 @@ var setCurrentAlbum = function(album) {
 
   for (var i = 0; i < album.songs.length; i++) {
     albumSongList.innerHTML += createSongRow(i + 1, album.songs[i].title, album.songs[i].duration);
-  }
-  currentAlbum = albumTitle.innerText;
+  };
+
+  setAlbumIndex(album);
+
 };
 
 var songListContainer = document.getElementsByClassName('album-view-song-list')[0];
@@ -95,20 +106,18 @@ var songRows = document.getElementsByClassName('album-view-song-item');
 var playButtonTemplate = '<a class="album-song-button"><span class="ion-play"></span></a>';
 
 window.onload = function() {
-    setCurrentAlbum(albumInfected);
+    setCurrentAlbum(albumPicasso);
 };
 
 var changeByCover = function () {
-  if (currentAlbum === 'The Colors') {
-    setCurrentAlbum(albumMarconi)
-  } else if (currentAlbum === 'The Telephone') {
-    setCurrentAlbum(albumInfected)
-  } else if (currentAlbum === 'Army of Mushrooms') {
-    setCurrentAlbum(albumPicasso)
+  if (currentAlbumIndex < (albumArray.length-1)) {
+    setCurrentAlbum ((albumArray[currentAlbumIndex+1]));
+    setAlbumIndex ((albumArray[currentAlbumIndex]));
+  } else {
+    setCurrentAlbum ((albumArray[0]));
+    setAlbumIndex ((albumArray[0]));
   }
 };
 
-var x = document.getElementsByClassName('album-cover-art')[0];
-x.addEventListener("click", changeByCover);
-
-console.log(x);
+var albumCoverLocator = document.getElementsByClassName('album-cover-art')[0];
+albumCoverLocator.addEventListener("click", changeByCover);
