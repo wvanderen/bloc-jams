@@ -1,35 +1,3 @@
-// Example album
-var albumPicasso = {
-    title: 'The Colors',
-    artist: 'Pablo Picasso',
-    label: 'Cubism',
-    year: '1881',
-    albumArtUrl: 'assets/images/album_covers/01.png',
-    songs: [
-      { title: 'Blue', duration: '4:26' },
-      { title: 'Green', duration: '3:14' },
-      { title: 'Red', duration: '5:01' },
-      { title: 'Pink', duration: '3:21' },
-      { title: 'Magenta', duration: '2:15' },
-    ]
-};
-
-//Another Album Exmaple
-var albumMarconi = {
-  title: 'The Telephone',
-  artist: 'Gugielmo Marconi',
-  label: 'EM',
-  year: '1909',
-  albumArtUrl: 'assets/images/album_covers/20.png',
-  songs : [
-    { title: 'Hello, Operator?', duration: '1:01' },
-    { title: 'Ring, ring, ring', duration: '5:01' },
-    { title: 'Fits in your pocket', duration: '3:21' },
-    { title: 'Can you hear me now?', duration: '3:14' },
-    { title: 'Wrong phone number', duration: '2:15' },
-  ]
-};
-
 var createSongRow = function(songNumber, songName, songLength) {
     var template =
       '<tr class="album-view-song-item">'
@@ -57,9 +25,21 @@ var createSongRow = function(songNumber, songName, songLength) {
       else if (currentlyPlayingSong === songNumber) {
        //Swtich from pause to play button to pause currently playing song
         $(this).html(playButtonTemplate);
-        currentlyPlayingSong = null;
+        currentlyPlayingSongNumber = null;
+        currentSongFromAlbum = null;
+      }
+        else if (currentlyPlayingSongNumber !== $(this).attr('data-song-number')) {
+          //switch from play--> pause button to indicate a new song is playing.
+          $(this).html(pauseButtonTemplate);
+          currentlyPlayingSongNumber = songItem;
+          currentSongFromAlbum = currentAlbum.songs[songItem - 1];
       }
 
+      var updatePlayerBarSong = function() {
+        $('h2.song-name').text($('.song-item-title'));
+        $('h2.artist-song-mobile').text($('.song-item-title') + $('.album-view-artist'));
+        $('h2.artist-name').text($('.album-view-artist'));
+      };
     };
 
     var onHover = function(event) {
@@ -88,6 +68,7 @@ var createSongRow = function(songNumber, songName, songLength) {
 };
 
 var setCurrentAlbum = function(album) {
+  currentAlbum = album;
   var $albumTitle = $('.album-view-title');
   var $albumArtist = $('.album-view-artist');
   var $albumReleaseInfo = $('.album-view-release-info');
@@ -110,8 +91,11 @@ var setCurrentAlbum = function(album) {
 var playButtonTemplate = '<a class="album-song-button"><span class="ion-play"></span></a>';
 var pauseButtonTemplate = '<a class="album-song-button"><span class="ion-pause"></span></a>';
 
-//store state of playing songs
-var currentlyPlayingSong = null;
+//Stores current album displayed
+var currentAlbum = null;
+var currentlyPlayingSongNumber = null;
+//Holds currently playing song object from songs array
+var currentSongFromAlbum = null;
 
 $(document).ready(function() {
     setCurrentAlbum(albumPicasso);
