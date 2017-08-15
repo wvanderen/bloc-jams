@@ -44,38 +44,40 @@ var createSongRow = function(songNumber, songName, songLength) {
     var clickHandler = function() {
       var songItem = $(this).attr('data-song-number');
 
-      if (currentlyPlayingSong === null) {
-        $(songItem).html(pauseButtonTemplate);
-        currentlyPlayingSong = $('.song-item-number').attr('data-song-number');
+      if (currentlyPlayingSong !== null) {
+      //Revert to song number for currently playing song when user starts playing new song
+        var currentlyPlayingSongElement = $('.song-item-number[data-song-number="' + currentlyPlayingSong + '"]');
+        currentlyPlayingSongElement.html(currentlyPlayingSong);
       }
-       else if (currentlyPlayingSong === songItem) {
-        $(this).html(playButtonTemplate);
-        currentlyPlayingSong = null;
-      }
-        else if (currentlyPlayingSong !== $(this).attr('data-song-number')) {
-        var currentlyPlayingSongElement = $('[data-song-number="' + currentlyPlayingSong + '"]');
-        currentlyPlayingSongElement.html(currentlyPlayingSongElement.attr('data-song-number'));
+      else if (currentlyPlayingSong !== songItem) {
+        //Switch from play to pause button to indicate new song is playing.
         $(this).html(pauseButtonTemplate);
         currentlyPlayingSong = songItem;
       }
+      else if (currentlyPlayingSong === songItem) {
+       //Swtich from pause to play button to pause currently playing song
+        $(this).html(playButtonTemplate);
+        currentlyPlayingSong = null;
+      }
+
     };
 
     var onHover = function(event) {
-      var songItem = $(this).find('.song-item-number');
-      var songItemNumber = songItem.attr('data-song-number');
+      var songNumberCell = $(this).find('.song-item-number');
+      var songNumber = songNumberCell.attr('data-song-number');
 
-      if (songItemNumber !== currentlyPlayingSong) {
-        songItem.html(playButtonTemplate);
+      if (songNumber !== currentlyPlayingSong) {
+        songNumberCell.html(playButtonTemplate);
       }
     };
 
 
     var offHover = function(event) {
-        var songItem = $(this).find('.song-item-number');
-        var songItemNumber = songItem.attr('data-song-number');
+      var songNumberCell = $(this).find('.song-item-number');
+      var songNumber = songNumberCell.attr('data-song-number');
 
-        if (songItemNumber !== currentlyPlayingSong) {
-          songItem.html(songItemNumber);
+        if (songNumber !== currentlyPlayingSong) {
+          songNumberCell.html(songNumber);
         }
       };
 
