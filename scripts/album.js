@@ -24,22 +24,20 @@ var createSongRow = function(songNumber, songName, songLength) {
 
       if (currentlyPlayingSongNumber !== null) {
       //Revert to song number for currently playing song when user starts playing new song
-        var currentlyPlayingCell = $('.song-item-number[data-song-number="' + currentlyPlayingSongNumber + '"]');
+        var currentlyPlayingCell = getSongNumberCell(currentlyPlayingSongNumber);
         currentlyPlayingCell.html(currentlyPlayingSongNumber);
       }
       if (currentlyPlayingSongNumber !== songNumber) {
         //Switch from play to pause button to indicate new song is playing.
         $(this).html(pauseButtonTemplate);
-        currentlyPlayingSongNumber = songNumber;
-        currentSongFromAlbum = currentAlbum.songs[songNumber - 1];
+        setSong(songNumber);
         updatePlayerBarSong();
       }
       else if (currentlyPlayingSongNumber === songNumber) {
        //Swtich from pause to play button to pause currently playing song
         $(this).html(playButtonTemplate);
         $('.main-controls .play-pause').html(playerBarPlayButton);
-        currentlyPlayingSongNumber = null;
-        currentSongFromAlbum = null;
+        setSong(null);
       }
     };
 
@@ -113,12 +111,11 @@ var nextSong = function() {
   };
 
     //Sets previously playing song to a number and sets currentlyPlayingSongNumber to new song
-    var previouslyPlayingCell = $('.song-item-number[data-song-number="' + currentlyPlayingSongNumber + '"]');
+    var previouslyPlayingCell = getSongNumberCell(currentlyPlayingSongNumber);
     previouslyPlayingCell.html(currentlyPlayingSongNumber);
-    currentlyPlayingSongNumber = nextSongNumber;
-    currentSongFromAlbum = currentAlbum.songs[nextSongNumber - 1];
+    setSong(nextSongNumber);
     //Sets new song to pause button and updates player bar
-    currentlyPlayingCell = $('.song-item-number[data-song-number="' + currentlyPlayingSongNumber + '"]');
+    var currentlyPlayingCell = getSongNumberCell(currentlyPlayingSongNumber);
     currentlyPlayingCell.html(pauseButtonTemplate);
     updatePlayerBarSong();
 };
@@ -126,12 +123,12 @@ var nextSong = function() {
 var previousSong = function () {
   var previousSongNumber = parseInt($(this).attr('data-song-number'));
 
-  //Gets number of new song to set. Loops around if first song
-  if (trackIndex(currentAlbum, currentSongFromAlbum) > 0) {
+    //Gets number of new song to set. Loops around if first song
+    if (trackIndex(currentAlbum, currentSongFromAlbum) > 0) {
       previousSongNumber = trackIndex(currentAlbum, currentSongFromAlbum);
-  } else {
+    } else {
       previousSongNumber = currentAlbum.songs.length;
-  }
+    }
 
   var updatePlayerBarSong = function() {
     //Updates text in player bar based on current song
@@ -143,12 +140,11 @@ var previousSong = function () {
   };
 
   //Sets previously playing song to a number and sets currentlyPlayingSongNumber to new song
-    var previouslyPlayingCell = $('.song-item-number[data-song-number="' + currentlyPlayingSongNumber + '"]');
+    var previouslyPlayingCell = getSongNumberCell(currentlyPlayingSongNumber);
     previouslyPlayingCell.html(currentlyPlayingSongNumber);
-    currentlyPlayingSongNumber = previousSongNumber;
-    currentSongFromAlbum = currentAlbum.songs[previousSongNumber - 1];
   //Sets new song to pause button and updates player bar
-    currentlyPlayingCell = $('.song-item-number[data-song-number="' + currentlyPlayingSongNumber + '"]');
+    setSong(previousSongNumber);
+    var currentlyPlayingCell = getSongNumberCell(currentlyPlayingSongNumber);
     currentlyPlayingCell.html(pauseButtonTemplate);
     updatePlayerBarSong();
 };
@@ -166,6 +162,15 @@ var currentSongFromAlbum = null;
 
 var $previousButton = $('.main-controls .previous');
 var $nextButton = $('.main-controls .next');
+
+var setSong = function(songNumber) {
+  currentlyPlayingSongNumber = songNumber;
+  currentSongFromAlbum = currentAlbum.songs[songNumber - 1];
+};
+
+var getSongNumberCell = function(number) {
+  return $('.song-item-number[data-song-number="' + number + '"]');
+}
 
 $(document).ready(function() {
     setCurrentAlbum(albumPicasso);
