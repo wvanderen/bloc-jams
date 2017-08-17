@@ -187,11 +187,13 @@ if (currentSoundFile) {
   currentSoundFile.stop();
 }
 
+buzz.defaults.formats = ['wav', 'mp3'];
+
   currentlyPlayingSongNumber = parseInt(songNumber);
   currentSongFromAlbum = currentAlbum.songs[songNumber - 1];
   //Creates new buzz sound object. Defines format and preload settings
   currentSoundFile = new buzz.sound(currentSongFromAlbum.audioUrl, {
-    formats: ['mp3', 'wav'],
+    formats: [ 'wav', 'mp3'],
     preload: true
   });
 
