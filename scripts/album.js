@@ -180,6 +180,7 @@ var currentVolume = 80;
 
 var $previousButton = $('.main-controls .previous');
 var $nextButton = $('.main-controls .next');
+var $playPause = $('.main-controls .play-pause');
 
 var setSong = function(songNumber) {
 if (currentSoundFile) {
@@ -207,8 +208,25 @@ var getSongNumberCell = function(number) {
   return $('.song-item-number[data-song-number="' + number + '"]');
 }
 
+var togglePlayFromPlayerBar = function() {
+  if (currentSoundFile.isPaused(currentSoundFile)) {
+    //If play button is clicked when a song is paused we change both play buttons to pause and play the song
+    var currentlyPlayingCell = getSongNumberCell(currentlyPlayingSongNumber);
+    currentlyPlayingCell.html(pauseButtonTemplate);
+    $(this).html(pauseButtonTemplate);
+    currentSoundFile.play(currentSoundFile);
+  } else if (currentSoundFile) {
+    //If the pause button is clicked we pause the song and change the pause buttons to play
+      var currentlyPlayingCell = getSongNumberCell(currentlyPlayingSongNumber);
+      currentlyPlayingCell.html(playButtonTemplate);
+      $(this).html(playButtonTemplate);
+      currentSoundFile.pause(currentSoundFile);
+  }
+};
+
 $(document).ready(function() {
     setCurrentAlbum(albumCarpeLiam);
     $previousButton.click(previousSong);
     $nextButton.click(nextSong);
+    $playPause.click(togglePlayFromPlayerBar);
 });
