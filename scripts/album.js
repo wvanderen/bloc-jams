@@ -3,7 +3,7 @@ var createSongRow = function(songNumber, songName, songLength) {
       '<tr class="album-view-song-item">'
     + '   <td class="song-item-number" data-song-number="' + songNumber + '">' +songNumber + '</td>'
     + '   <td class="song-item-title">' + songName + '</td>'
-    + '   <td class="song-item-duration">' + songLength + '</td>'
+    + '   <td class="song-item-duration">' + filterTimeCode(songLength) + '</td>'
     + '</tr>'
     ;
 
@@ -18,6 +18,7 @@ var createSongRow = function(songNumber, songName, songLength) {
         $('.currently-playing .artist-name').text(currentAlbum.artist);
         //Updates status of play/pause button in playerbar
         $('.main-controls .play-pause').html(playerBarPauseButton);
+        setTotalTimeInPlayerBar(currentSongFromAlbum.duration);
       };
 
       var songNumber = parseInt($(this).attr('data-song-number'));
@@ -112,7 +113,9 @@ var updateSeekBarWhileSongPlays = function() {
     currentSoundFile.bind('timeupdate', function(event) {
       var seekBarFillRatio = this.getTime() / this.getDuration();
       var $seekBar = $('.seek-control .seek-bar');
+      var currentTime = this.getTime();
 
+      setCurrentTimeInPlayerBar(currentTime);
       updateSeekPercentage($seekBar, seekBarFillRatio);
     });
   }
@@ -193,6 +196,7 @@ var nextSong = function() {
     $('.currently-playing .artist-name').text(currentAlbum.artist);
     //Updates status of play/pause button in playerbar
     $('.main-controls .play-pause').html(playerBarPauseButton);
+    setTotalTimeInPlayerBar(currentSongFromAlbum.duration);
   };
 
     //Sets previously playing song to a number and sets currentlyPlayingSongNumber to new song
@@ -225,6 +229,7 @@ var previousSong = function () {
     $('.currently-playing .artist-name').text(currentAlbum.artist);
     //Updates status of play/pause button in playerbar
     $('.main-controls .play-pause').html(playerBarPauseButton);
+    setTotalTimeInPlayerBar(currentSongFromAlbum.duration);
   };
 
   //Sets previously playing song to a number and sets currentlyPlayingSongNumber to new song
@@ -270,7 +275,7 @@ buzz.defaults.formats = ['mp3', 'wav'];
   currentSongFromAlbum = currentAlbum.songs[songNumber - 1];
   //Creates new buzz sound object. Defines format and preload settings
   currentSoundFile = new buzz.sound(currentSongFromAlbum.audioUrl, {
-    formats: [ 'mp3', 'wav'],
+    formats: [ 'wav', 'mp3'],
     preload: true
   });
 
@@ -309,8 +314,30 @@ var togglePlayFromPlayerBar = function() {
   }
 };
 
+var setCurrentTimeInPlayerBar = function(currentTime) {
+  //sets text of element with class .current-time to current time in song
+  $('.current-time').text(filterTimeCode(currentTime));
+};
+
+var setTotalTimeInPlayerBar = function(totalTime) {
+  //sets the text of the element with class .total time to the length of the song.
+  $('.seek-control .total-time').text(filterTimeCode(totalTime));
+};
+
+var filterTimeCode = function(timeInSeconds) {
+  var totalSeconds = parseFloat(timeInSeconds);
+  var minutes = Math.floor(totalSeconds / 60);
+//Seconds calculation and formatting
+  if (totalSeconds > 9) {
+    var seconds = Math.floor(totalSeconds % 60);
+  } else seconds = "0" + Math.floor(totalSeconds % 60);
+//Return formatted time
+  var currentTime = minutes + ":" + seconds;
+  return currentTime;
+};
+
 $(document).ready(function() {
-    setCurrentAlbum(albumPicasso);
+    setCurrentAlbum(albumCarpeLiam);
     $previousButton.click(previousSong);
     $nextButton.click(nextSong);
     $playPause.click(togglePlayFromPlayerBar);
